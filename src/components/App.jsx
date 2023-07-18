@@ -1,33 +1,53 @@
-import React, { useEffect } from 'react';
-import { ContactForm } from './ContactForm/ContactForm'
-import { Filter } from './Filter/Filter'
-import { ContactList } from './ContactList/ContactList'
-import { useSelector, useDispatch } from 'react-redux';
-import { selectIsLoading, selectError } from 'redux/selectors';
-import { fetchContacts } from 'redux/axiosOperation';
+import React, { useEffect, lazy } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Layout } from './Layout';
+import { PrivateRoute } from './PrivateRoute';
+import { RestrictedRoute } from './RestrictedRoute';
+import { refreshUser } from 'redux/auth/operations';
+import { useAuth } from '../hook/useAuth';
+
+const HomePage = lazy(() => import('../pages/Home'));
+const RegisterPage = lazy(() => import('../pages/Register'));
+const LoginPage = lazy(() => import('../pages/Login'));
+const ContactPage = lazy(() => import('../pages/Contacts'));
 
 export function App() {
   const dispatch = useDispatch();
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
+
+  const { isRefreshing } = useAuth();
 
   useEffect(() => {
-    dispatch(fetchContacts());
+    dispatch(refreshUser());
   }, [dispatch]);
 
-  return (
-    <div style={appSlyle}>
-      <h1>Phonebook</h1>
-      <ContactForm />
-
-      <h2>Contacts</h2>
-      <Filter />
-      {isLoading && <b>Loading tasks...</b>}
-      {error && <b>{error}</b>}
-      <ContactList />
-
-    </div>
-  )
+  return isRefreshing ? (
+    <b>Refreshing user...</b>
+  ) : (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route
+          path="/register"
+          element={
+            <RestrictedRoute redirectTo="/contacts" component={<RegisterPage />} />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <RestrictedRoute redirectTo="/contacts" component={<LoginPage />} />
+          }
+        />
+        <Route
+          path="/contacts"
+          element={
+            <PrivateRoute redirectTo="/login" component={<ContactPage />} />
+          }
+        />
+      </Route>
+    </Routes>
+  );
 };
 
 
@@ -43,13 +63,13 @@ export function App() {
 
 
 
-const appSlyle = {
-  height: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 20,
+// const appSlyle = {
+//   height: '100vh',
+//   display: 'flex',
+//   flexDirection: 'column',
+//   gap: 20,
 
-  alignItems: 'center',
-  fontSize: 40,
-  color: '#010101'
-}
+//   alignItems: 'center',
+//   fontSize: 40,
+//   color: '#010101'
+// }

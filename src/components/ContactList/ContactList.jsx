@@ -1,12 +1,9 @@
 import css from './List-style.module.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/axiosOperation';
-import { selectVisibleContacts } from "redux/selectors";
-
+import { useSelector } from 'react-redux';
+import { selectVisibleContacts } from "redux/contacts/selectors";
+import { ContactItem } from './ContactItem';
 
 export const ContactList = () => {
-    const dispatch = useDispatch();
-
     // Отримання даних контактів для відображення
     const contactsToMarkup = useSelector(selectVisibleContacts);
 
@@ -14,14 +11,10 @@ export const ContactList = () => {
         <>
             {!contactsToMarkup.length && <b>This contact is not found</b>}
             <ul className={css.contactList}>
-                {contactsToMarkup.map(({ id, name, phone }) => {
-                    const handleDelete = () => dispatch(deleteContact(id));
+                {contactsToMarkup.map((contact) => {
 
                     return (
-                        <li key={id} className={css.contactItem}>
-                            {name}: {phone}
-                            <button onClick={handleDelete} className={css.deleteButton}>Delete</button>
-                        </li>
+                        <ContactItem key={contact.id} contact={contact} />
                     )
                 })}
             </ul>

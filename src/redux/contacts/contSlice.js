@@ -1,5 +1,5 @@
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
-import { fetchContacts, addContact, deleteContact } from "./axiosOperation";
+import { fetchContacts, addContact, deleteContact } from "./operation";
 
 const extraActions = [fetchContacts, addContact, deleteContact];
 const getActions = type => isAnyOf(...extraActions.map(action => action[type]));
