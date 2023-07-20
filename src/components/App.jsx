@@ -6,6 +6,7 @@ import { PrivateRoute } from './PrivateRoute';
 import { RestrictedRoute } from './RestrictedRoute';
 import { refreshUser } from 'redux/auth/operations';
 import { useAuth } from '../hook/useAuth';
+import Typography from '@mui/material/Typography';
 
 const HomePage = lazy(() => import('../pages/Home'));
 const RegisterPage = lazy(() => import('../pages/Register'));
@@ -16,7 +17,7 @@ export function App() {
   const dispatch = useDispatch();
 
   const { isRefreshing } = useAuth();
-
+  console.log(isRefreshing)
   useEffect(() => {
     const refresh = dispatch(refreshUser());
 
@@ -25,8 +26,8 @@ export function App() {
     };
   }, [dispatch]);
 
-  return isRefreshing ? (
-    <b>Refreshing user...</b>
+  return isRefreshing ? (<Typography component="p" sx={{ m: 15, zIndex: 100 }}>Refreshing user...</Typography>
+
   ) : (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -49,6 +50,7 @@ export function App() {
             <PrivateRoute redirectTo="/login" component={<ContactPage />} />
           }
         />
+        <Route path="*" index element={<HomePage />} />
       </Route>
     </Routes>
   );

@@ -20,16 +20,19 @@ const defaultTheme = createTheme();
 export const LoginForm = () => {
   const dispatch = useDispatch();
 
-  const handleSubmit = e => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    dispatch(
+    const res = await dispatch(
       logIn({
         email: form.elements.email.value,
         password: form.elements.password.value,
       })
     );
-    form.reset();
+    if (res?.error?.message) {
+      return alert('Email or password is not valid. Check it and try again')
+    }
+    form.reset();   
   };
 
   return (
