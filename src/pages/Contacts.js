@@ -6,6 +6,11 @@ import { Filter } from 'components/Filter/Filter';
 import { ContactList } from 'components/ContactList/ContactList';
 import { fetchContacts } from '../redux/contacts/operation';
 import { selectIsLoading, selectError, selectContacts } from 'redux/contacts/selectors';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Box, Typography } from '@mui/material';
+
+
+
 
 export default function Contacts() {
   const dispatch = useDispatch();
@@ -13,8 +18,14 @@ export default function Contacts() {
   const error = useSelector(selectError);
   const contacts = useSelector(selectContacts);
 
+  const matches = useMediaQuery('(max-width:750px)');
+  
   useEffect(() => {
-    dispatch(fetchContacts());
+    const fetch = dispatch(fetchContacts());
+
+    return () => {
+      fetch.abort();
+    };
   }, [dispatch]);
 
   return (
@@ -22,28 +33,34 @@ export default function Contacts() {
       <Helmet>
         <title>Your contacts</title>
       </Helmet>
-      <div style={appSlyle}>
-        <h1>Phonebook</h1>
+      <Box display="flex"
+        flexDirection="column"        
+        sx={{
+          maxWidth: matches ? 'sm' : 'xl',
+          gap: 3,
+          mt: 10,
+          alignItems: 'center',
+        }}
+      >
+        <Typography component="h1"sx={{fontSize: 50,fontWeight:600,}}>
+          Phonebook
+        </Typography>
+
         <ContactForm />
-        <h2>Contacts</h2>
-        <div>{isLoading && 'Request in progress...'}</div>
-        {contacts.length ? <Filter /> : <p>'No contacts yet'</p>}
+
+        <Typography component="h2"sx={{fontSize: 40,fontWeight:600, }}>
+          Contacts
+        </Typography>
+
+        {isLoading && <Typography component="h4">Request in progress...</Typography>} 
+        
+        {contacts.length ? <Filter /> :<Typography component="h4">'No contacts yet'</Typography> }
         {error && <b>{error}</b>}
+
         {!!contacts.length && <ContactList />}
         
-      </div>
+      </Box>
     </>
   );
 }
 
-
-const appSlyle = {
-  height: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 20,
-
-  alignItems: 'center',
-  fontSize: 40,
-  color: '#010101'
-}

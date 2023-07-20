@@ -1,15 +1,17 @@
 import { NavLink } from 'react-router-dom';
-import css from './AuthNav.module.css';
+// import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 export const AuthNav = () => {
   return (
-    <div>
-      <NavLink className={css.link} to="/register">
+    <>
+      <Button component={NavLink} to="/register" sx={{ color: '#fff' }}>
         Register
-      </NavLink>
-      <NavLink className={css.link} to="/login">
+      </Button>
+      <Button component={NavLink} to="/login" sx={{ color: '#fff' }}>
         Log In
-      </NavLink>
-    </div>
+      </Button>
+    </>        
+    
   );
 };

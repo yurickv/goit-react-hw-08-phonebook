@@ -1,66 +1,91 @@
 import React from "react";
-import { Formik, Form, Field } from 'formik';
+import { useFormik } from 'formik';
 import * as Yup from "yup";
-import css from './Contact-style.module.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectContacts } from "redux/contacts/selectors";
 import { addContact } from 'redux/contacts/operation';
+import { Box, TextField, Button } from '@mui/material';
 
 export const ContactForm = () => {
     const dispatch = useDispatch();
     const contacts = useSelector(selectContacts);
 
-    const handleSubmit = ({ name, number }, { resetForm }) => {
-        // Перевірка чи вже є контакт з таким іменем
-        const AddedContactCheck = contacts.find(contact => {
-            return contact.name.toLowerCase() === name.toLowerCase();
-        });
-        if (AddedContactCheck) {
-            return alert(`${AddedContactCheck.name} is already in contacts`);
-        };
+    const validationSchema = Yup.object({
+        name: Yup
+            .string('Enter your email')
+            .matches(/^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/, 'Must Contain only letter')
+            .required("Name Required"),
+        number: Yup
+            .string()
+            .min(10)
+            .matches(/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/, 'Must Contain only number')
+            .required("Phone number Required"),
+    });
 
-        dispatch(addContact({ name, number }));
-        resetForm();
-    };
+    const formik = useFormik({
+        initialValues: { name: '', number: '' },
+        validationSchema: validationSchema,
+        onSubmit: ({ name, number }, { resetForm }) => {
+            const AddedContactCheck = contacts.find(contact => {
+                return contact.name.toLowerCase() === name.toLowerCase();
+            });
+            if (AddedContactCheck) {
+                return alert(`${AddedContactCheck.name} is already in contacts`);
+            };
+
+            dispatch(addContact({ name, number }));
+            resetForm();
+        },
+        validateOnChange: false,
+        validateOnBlur: false,
+    });
+
+    const nameError = formik.errors.name;
+    const numberError = formik.errors.number;
 
     return (
-        <Formik
-            initialValues={{ name: '', number: '' }}
-            onSubmit={handleSubmit}
-            validationSchema={Yup.object().shape({
-                name: Yup.string()
-                    .required("Name Required")
-                    .matches(/^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/, "Must Contain only letter"),
-                number: Yup.number()
-                    .positive()
-                    .required("Phone number Required")
-            })}
+
+        <Box component="form" onSubmit={formik.handleSubmit}
+            noValidate
+            sx={{ display: 'flex', alignItems: 'center' }}
         >
-            <Form className={css.form}>
-                <label htmlFor="name" className={css.inputLabel}> <span>Name</span>
-                    <Field
-                        type="text"
-                        name="name"
-                        maxLength="20"
-                        placeholder="Add the name"
-                        title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-                        required
-                    />
-                </label>
-                <label htmlFor="number" className={css.inputLabel}><span>Number</span>
-                    <Field
-                        type="tel"
-                        name="number"
-                        minLength="10"
-                        maxLength="11"
-                        placeholder="Add the phone number"
-                        title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-                        required
-                    />
-                </label>
-                <button type='submit'>Add contact</button>
-            </Form>
-        </Formik>
+            <TextField
+                type="text"
+                error={Boolean(nameError)}
+                helperText={nameError}
+                label="Name"
+                name="name"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                required
+                variant="filled"
+                size="medium"
+                fullWidth
+            />
+            <TextField
+                type="tel"
+                error={Boolean(numberError)}
+                helperText={numberError}
+                label="Phone number"
+                name="number"
+                value={formik.values.number}
+                onChange={formik.handleChange}
+                required
+                sx={{ ml: 2 }}
+                variant="filled"
+                size="medium"
+                fullWidth
+            />
+            <Button color="primary" variant="outlined"
+                type="submit"
+                size="medium"
+                fullWidth
+                sx={{ ml: 5, p: 2 }}
+            >
+                Add contacts
+            </Button>
+        </Box>
+
     )
 
 
@@ -68,5 +93,4 @@ export const ContactForm = () => {
 
 
 }
-
 
