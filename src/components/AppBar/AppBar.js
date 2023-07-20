@@ -15,12 +15,11 @@ export const AppBarMark = (props) => {
   const matches = useMediaQuery('(max-width:750px)');
  
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignContent: 'center'}}>
       <CssBaseline />
       <AppBar >
-        <Toolbar 
-          sx={{maxWidth: matches ? 'sm' : 'xl',
-            display: 'flex',
+        <Toolbar maxwidth={matches ? 'sm' : 'xl'}
+          sx={{            
             flexDirection: 'row',
             justifyContent: 'space-between', }}
         >

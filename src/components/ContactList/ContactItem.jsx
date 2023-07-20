@@ -49,7 +49,6 @@ export const ContactItem = ({ contact }) => {
 
     return (
         <ListItem
-            // component="li"
             sx={{ display: 'flex', alignItems: 'center', mt: 1 }}
             key={id}
         >
