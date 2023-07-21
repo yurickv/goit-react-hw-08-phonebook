@@ -13,23 +13,30 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-
+import { toast } from 'react-hot-toast';
 const defaultTheme = createTheme();
 
 
 export const RegisterForm = () => {
   const dispatch = useDispatch();
 
-  const handleSubmit = e => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    dispatch(
+    const res = await dispatch(
       register({
         name: form.elements.name.value,
         email: form.elements.email.value,
         password: form.elements.password.value,
       })
     );
+      // .unwrap()
+      // .then(() => toast.sucses('Registration successfull!'))
+      // .catch(() => toast.error('Something went wrong...Try again'))
+    if (res?.error?.message) {
+      return  toast.error('Something went wrong...Try again') 
+    };
+
     form.reset();
   };
 

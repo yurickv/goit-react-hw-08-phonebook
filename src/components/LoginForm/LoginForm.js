@@ -12,7 +12,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { toast } from 'react-hot-toast';
 
 const defaultTheme = createTheme();
 
@@ -29,9 +29,12 @@ export const LoginForm = () => {
         password: form.elements.password.value,
       })
     );
+    
     if (res?.error?.message) {
-      return alert('Email or password is not valid. Check it and try again')
-    }
+      return  toast.error('Email or password is not valid. Check it and try again') 
+    };
+
+    // console.log(res);
     form.reset();   
   };
 
