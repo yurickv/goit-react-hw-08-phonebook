@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectContacts } from "redux/contacts/selectors";
 import { addContact } from 'redux/contacts/operation';
 import { Box, TextField, Button } from '@mui/material';
+import { toast } from 'react-hot-toast';
 
 export const ContactForm = () => {
     const dispatch = useDispatch();
@@ -30,7 +31,7 @@ export const ContactForm = () => {
                 return contact.name.toLowerCase() === name.toLowerCase();
             });
             if (AddedContactCheck) {
-                return alert(`${AddedContactCheck.name} is already in contacts`);
+                return toast.error(`${AddedContactCheck.name} is already in contacts`);
             };
 
             dispatch(addContact({ name, number }));

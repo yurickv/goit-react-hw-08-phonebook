@@ -32,7 +32,7 @@ export const RegisterForm = () => {
     );
       // .unwrap()
       // .then(() => toast.sucses('Registration successfull!'))
-      // .catch(() => toast.error('Something went wrong...Try again'))
+      // .catch(() => toast.error('Something went wrong...Try again'));
     if (res?.error?.message) {
       return  toast.error('Something went wrong...Try again') 
     };
